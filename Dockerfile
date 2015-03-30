@@ -19,15 +19,15 @@ RUN echo -e '\
   ' > /etc/apt/apt.conf.d/02no-cache &&\
   echo 'Acquire::GzipIndexes "true"; Acquire::CompressionTypes::Order:: "gz";' > /etc/apt/apt.conf.d/02compress-indexes &&\
   echo 'force-unsafe-io' | tee /etc/dpkg/dpkg.cfg.d/02apt-speedup &&\
-  apt-get -q update -y && apt-get dist-upgrade -y &&\
   dpkg-divert --local --rename /usr/bin/ischroot && ln -sf /bin/true /usr/bin/ischroot &&\
 # Install node using ppa
-  apt-get -y install software-properties-common &&\
+  apt-get install software-properties-common &&\
   add-apt-repository -y ppa:chris-lea/node.js &&\
   apt-get update &&\
-  apt-get -y install nodejs &&\
+  apt-get update && apt-get dist-upgrade &&\
+  apt-get install nodejs &&\
 # Firefox
-  apt-get -y install default-jre git firefox
+  apt-get install default-jre git firefox
 
 # Chrome
 #RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - \
@@ -36,8 +36,9 @@ RUN echo -e '\
 #  apt-get -qy install google-chrome-stable
 
 # Headless 
-RUN apt-get -qy install xvfb libgl1-mesa-dri xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic &&\
+RUN apt-get install xvfb libgl1-mesa-dri xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic &&\
 # Install sitespeed.io using npm comming from .deb
+  mkdir ~/.npm &&\
   npm install -g sitespeed.io &&\
 # Clean up APT when done.
   apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
